@@ -4,6 +4,67 @@ All notable changes to this project will be documented in this file.
 Each new release typically also includes the latest modulesync defaults.
 These should not affect the functionality of the module.
 
+## [v9.0.0](https://github.com/voxpupuli/puppet-prometheus/tree/v9.0.0) (2020-06-16)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-prometheus/compare/v8.5.0...v9.0.0)
+
+**Breaking changes:**
+
+- Redis Exporter: Update 1.3.4-\>1.6.1 [\#461](https://github.com/voxpupuli/puppet-prometheus/pull/461) ([bastelfreak](https://github.com/bastelfreak))
+- Upgrade varnish\_exporter version from 1.5 to 1.5.2 [\#457](https://github.com/voxpupuli/puppet-prometheus/pull/457) ([mcanevet](https://github.com/mcanevet))
+- Update PushProx to new namespace / update version 20190708 -\> 0.1.0 [\#456](https://github.com/voxpupuli/puppet-prometheus/pull/456) ([mcanevet](https://github.com/mcanevet))
+- Update rabbitmq\_exporter to version 0.29.0 [\#453](https://github.com/voxpupuli/puppet-prometheus/pull/453) ([dhoppe](https://github.com/dhoppe))
+- graphite\_exporter: update 0.2.0-\>0.7.1 [\#357](https://github.com/voxpupuli/puppet-prometheus/pull/357) ([bastelfreak](https://github.com/bastelfreak))
+
+**Implemented enhancements:**
+
+- Implement puppetdb exporter [\#463](https://github.com/voxpupuli/puppet-prometheus/pull/463) ([bastelfreak](https://github.com/bastelfreak))
+- Add memcached exporter support [\#462](https://github.com/voxpupuli/puppet-prometheus/pull/462) ([bastelfreak](https://github.com/bastelfreak))
+- \(\#458\) add grok\_exporter [\#459](https://github.com/voxpupuli/puppet-prometheus/pull/459) ([kuldazbraslav](https://github.com/kuldazbraslav))
+
+**Closed issues:**
+
+- Feature request for grok\_exporter [\#458](https://github.com/voxpupuli/puppet-prometheus/issues/458)
+- Error 500 on SERVER: Server Error: Evaluation Error: Error while evaluating a Function Call, Could not find class ::systemd  [\#257](https://github.com/voxpupuli/puppet-prometheus/issues/257)
+
+## [v8.5.0](https://github.com/voxpupuli/puppet-prometheus/tree/v8.5.0) (2020-05-21)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-prometheus/compare/v8.4.0...v8.5.0)
+
+**Implemented enhancements:**
+
+- Allow hiding of prom config file [\#451](https://github.com/voxpupuli/puppet-prometheus/pull/451) ([hooten](https://github.com/hooten))
+- Allow extract\_path to be modified [\#449](https://github.com/voxpupuli/puppet-prometheus/pull/449) ([treydock](https://github.com/treydock))
+- Add support for Debian 10 [\#447](https://github.com/voxpupuli/puppet-prometheus/pull/447) ([dhoppe](https://github.com/dhoppe))
+
+**Merged pull requests:**
+
+- Fix scrape job file names to ensure job\_name is prefix [\#450](https://github.com/voxpupuli/puppet-prometheus/pull/450) ([treydock](https://github.com/treydock))
+
+## [v8.4.0](https://github.com/voxpupuli/puppet-prometheus/tree/v8.4.0) (2020-04-17)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-prometheus/compare/v8.3.0...v8.4.0)
+
+**Implemented enhancements:**
+
+- Use `--scrape_uri` instead of `-scrape_uri` for apache\_exporter versions 0.8.0 and greater [\#444](https://github.com/voxpupuli/puppet-prometheus/pull/444) ([krische](https://github.com/krische))
+- Support ppc64le [\#443](https://github.com/voxpupuli/puppet-prometheus/pull/443) ([treydock](https://github.com/treydock))
+- add achive\_bin\_path parameter defaulting to existing value [\#438](https://github.com/voxpupuli/puppet-prometheus/pull/438) ([robmbrooks](https://github.com/robmbrooks))
+- Add VZ 6/7 to metadata.json [\#436](https://github.com/voxpupuli/puppet-prometheus/pull/436) ([bastelfreak](https://github.com/bastelfreak))
+- have a $service\_name parameter for all prometheus-exporters [\#430](https://github.com/voxpupuli/puppet-prometheus/pull/430) ([unki](https://github.com/unki))
+
+**Fixed bugs:**
+
+- have node file definitions use underscore instead of column [\#435](https://github.com/voxpupuli/puppet-prometheus/pull/435) ([ndelic0](https://github.com/ndelic0))
+
+**Closed issues:**
+
+- Apache Exporter 0.8.0+ uses `--` as argument prefix [\#442](https://github.com/voxpupuli/puppet-prometheus/issues/442)
+
+**Merged pull requests:**
+
+- Use voxpupuli-acceptance [\#441](https://github.com/voxpupuli/puppet-prometheus/pull/441) ([ekohl](https://github.com/ekohl))
+
 ## [v8.3.0](https://github.com/voxpupuli/puppet-prometheus/tree/v8.3.0) (2020-02-28)
 
 [Full Changelog](https://github.com/voxpupuli/puppet-prometheus/compare/v8.2.1...v8.3.0)
@@ -190,7 +251,6 @@ These should not affect the functionality of the module.
 - Bad formed prometheus.service  [\#306](https://github.com/voxpupuli/puppet-prometheus/issues/306)
 - apache\_exporter unable to contact apache on Debian 7 [\#296](https://github.com/voxpupuli/puppet-prometheus/issues/296)
 - Unable to force arch for installing exporter [\#265](https://github.com/voxpupuli/puppet-prometheus/issues/265)
-- Configuration of prometheus::server fails when looking up configname [\#254](https://github.com/voxpupuli/puppet-prometheus/issues/254)
 - support statsd\_exporter \>= 0.5.0 [\#248](https://github.com/voxpupuli/puppet-prometheus/issues/248)
 - Service fails to start under systemd [\#244](https://github.com/voxpupuli/puppet-prometheus/issues/244)
 - Add support for exporting/collecting \*\_exporter configs [\#126](https://github.com/voxpupuli/puppet-prometheus/issues/126)
@@ -567,7 +627,7 @@ These should not affect the functionality of the module.
 
 ## [v2.0.0](https://github.com/voxpupuli/puppet-prometheus/tree/v2.0.0) (2017-10-12)
 
-[Full Changelog](https://github.com/voxpupuli/puppet-prometheus/compare/v1.0.0...v2.0.0)
+[Full Changelog](https://github.com/voxpupuli/puppet-prometheus/compare/1.0.0...v2.0.0)
 
 **Breaking changes:**
 
@@ -599,13 +659,13 @@ These should not affect the functionality of the module.
 - Add param service\_name to node\_exporter class [\#40](https://github.com/voxpupuli/puppet-prometheus/pull/40) ([bastelfreak](https://github.com/bastelfreak))
 - backport changes to upstream [\#39](https://github.com/voxpupuli/puppet-prometheus/pull/39) ([bastelfreak](https://github.com/bastelfreak))
 
-## [v1.0.0](https://github.com/voxpupuli/puppet-prometheus/tree/v1.0.0) (2017-03-26)
-
-[Full Changelog](https://github.com/voxpupuli/puppet-prometheus/compare/1.0.0...v1.0.0)
-
 ## [1.0.0](https://github.com/voxpupuli/puppet-prometheus/tree/1.0.0) (2017-03-26)
 
-[Full Changelog](https://github.com/voxpupuli/puppet-prometheus/compare/v0.2.4...1.0.0)
+[Full Changelog](https://github.com/voxpupuli/puppet-prometheus/compare/v1.0.0...1.0.0)
+
+## [v1.0.0](https://github.com/voxpupuli/puppet-prometheus/tree/v1.0.0) (2017-03-26)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-prometheus/compare/v0.2.4...v1.0.0)
 
 ## [v0.2.4](https://github.com/voxpupuli/puppet-prometheus/tree/v0.2.4) (2017-03-13)
 

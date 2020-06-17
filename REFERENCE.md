@@ -23,6 +23,7 @@ _Public Classes_
 Currently only the install from url is implemented, when Prometheus will deliver packages for some Linux distros I will
 implement the package install method as well
 The package method needs specific yum or apt repo settings which are not made yet by the module
+* [`prometheus::memcached_exporter`](#prometheusmemcached_exporter): This module manages prometheus node memcached_exporter
 * [`prometheus::mesos_exporter`](#prometheusmesos_exporter): This module manages prometheus mesos_exporter
 * [`prometheus::mongodb_exporter`](#prometheusmongodb_exporter): This module manages prometheus mongodb_exporter
 * [`prometheus::mysqld_exporter`](#prometheusmysqld_exporter): manages prometheus mysqld_exporter
@@ -31,6 +32,7 @@ The package method needs specific yum or apt repo settings which are not made ye
 * [`prometheus::postfix_exporter`](#prometheuspostfix_exporter): manages prometheus postfix_exporter
 * [`prometheus::postgres_exporter`](#prometheuspostgres_exporter): This module manages prometheus node postgres_exporter
 * [`prometheus::process_exporter`](#prometheusprocess_exporter): This module manages prometheus process_exporter
+* [`prometheus::puppetdb_exporter`](#prometheuspuppetdb_exporter): This module manages prometheus node puppetdb_exporter
 * [`prometheus::pushgateway`](#prometheuspushgateway): This module manages prometheus node pushgateway
 * [`prometheus::pushprox_client`](#prometheuspushprox_client): This module manages prometheus pushprox_client
 * [`prometheus::pushprox_proxy`](#prometheuspushprox_proxy): This module manages prometheus pushprox_proxy
@@ -246,6 +248,12 @@ Data type: `Stdlib::Ensure::Service`
 State ensured from prometheus service (default 'running')
 
 Default value: 'running'
+
+##### `service_name`
+
+Data type: `String`
+
+Name of the prometheus service (default 'prometheus')
 
 ##### `manage_service`
 
@@ -680,6 +688,14 @@ Data type: `Optional[Enum['logfmt', 'json']]`
 Output format of log messages. One of: [logfmt, json]
 
 Default value: `undef`
+
+##### `config_show_diff`
+
+Data type: `Boolean`
+
+Whether to show prometheus configuration file diff in the Puppet logs.
+
+Default value: `true`
 
 ##### `extra_groups`
 
@@ -1348,7 +1364,7 @@ If package, then use this for package ensure default 'latest'
 
 ##### `package_name`
 
-Data type: `String`
+Data type: `String[1]`
 
 The binary package name - not available yet
 
@@ -1383,6 +1399,12 @@ Data type: `Stdlib::Ensure::Service`
 State ensured for the service (default 'running')
 
 Default value: 'running'
+
+##### `service_name`
+
+Data type: `String[1]`
+
+Name of the beanstalkd exporter service (default 'beanstalkd_exporter')
 
 ##### `user`
 
@@ -1561,7 +1583,7 @@ Default value: 'installed'
 
 ##### `package_name`
 
-Data type: `String`
+Data type: `String[1]`
 
 The binary package name - not available yet
 
@@ -1808,7 +1830,7 @@ If package, then use this for package ensure default 'latest'
 
 ##### `package_name`
 
-Data type: `String`
+Data type: `String[1]`
 
 The binary package name - not available yet
 
@@ -2044,6 +2066,12 @@ State ensured for the service (default 'running')
 
 Default value: 'running'
 
+##### `service_name`
+
+Data type: `String[1]`
+
+Name of the collectd exporter service (default 'collectd_exporter')
+
 ##### `user`
 
 Data type: `String[1]`
@@ -2230,7 +2258,7 @@ If package, then use this for package ensure default 'latest'
 
 ##### `package_name`
 
-Data type: `String`
+Data type: `String[1]`
 
 The binary package name - not available yet
 
@@ -2265,6 +2293,12 @@ Data type: `Stdlib::Ensure::Service`
 State ensured for the service (default 'running')
 
 Default value: 'running'
+
+##### `service_name`
+
+Data type: `String[1]`
+
+Name of the consul exporter service (default 'consul_exporter')
 
 ##### `user`
 
@@ -2454,7 +2488,7 @@ If package, then use this for package ensure default 'latest'
 
 ##### `package_name`
 
-Data type: `String`
+Data type: `String[1]`
 
 The binary package name - not available yet
 
@@ -2509,6 +2543,12 @@ Data type: `Boolean`
 Since version 1.1.0, the elasticsearch exporter uses kingpin, thus
 this param to define how we call the es.uri and es.timeout in the $options
 https://github.com/justwatchcom/elasticsearch_exporter/blob/v1.1.0/CHANGELOG.md
+
+##### `service_name`
+
+Data type: `String[1]`
+
+
 
 ##### `export_scrape_job`
 
@@ -2654,7 +2694,7 @@ If package, then use this for package ensure default 'latest'
 
 ##### `package_name`
 
-Data type: `String`
+Data type: `String[1]`
 
 The binary package name - not available yet
 
@@ -2689,6 +2729,12 @@ Data type: `Stdlib::Ensure::Service`
 State ensured for the service (default 'running')
 
 Default value: 'running'
+
+##### `service_name`
+
+Data type: `String[1]`
+
+Name of the graphite exporter service (default 'graphite_exporter')
 
 ##### `user`
 
@@ -2860,7 +2906,7 @@ If package, then use this for package ensure default 'latest'
 
 ##### `package_name`
 
-Data type: `String`
+Data type: `String[1]`
 
 The binary package name - not available yet
 
@@ -2952,6 +2998,238 @@ Install prometheus via different methods with parameters from init
 Currently only the install from url is implemented, when Prometheus will deliver packages for some Linux distros I will
 implement the package install method as well
 The package method needs specific yum or apt repo settings which are not made yet by the module
+
+### prometheus::memcached_exporter
+
+This module manages prometheus node memcached_exporter
+
+#### Parameters
+
+The following parameters are available in the `prometheus::memcached_exporter` class.
+
+##### `arch`
+
+Data type: `String[1]`
+
+Architecture (amd64 or i386)
+
+Default value: $prometheus::real_arch
+
+##### `bin_dir`
+
+Data type: `String`
+
+Directory where binaries are located
+
+Default value: $prometheus::bin_dir
+
+##### `download_extension`
+
+Data type: `String`
+
+Extension for the release binary archive
+
+Default value: 'tar.gz'
+
+##### `download_url`
+
+Data type: `Optional[String]`
+
+Complete URL corresponding to the where the release binary archive can be downloaded
+
+Default value: `undef`
+
+##### `download_url_base`
+
+Data type: `String`
+
+Base URL for the binary archive
+
+Default value: 'https://github.com/prometheus/memcached_exporter/releases'
+
+##### `extra_groups`
+
+Data type: `Array[String]`
+
+Extra groups to add the binary user to
+
+Default value: []
+
+##### `extra_options`
+
+Data type: `String`
+
+Extra options added to the startup command
+
+Default value: ''
+
+##### `group`
+
+Data type: `String`
+
+Group under which the binary is running
+
+Default value: 'memcached-exporter'
+
+##### `init_style`
+
+Data type: `Prometheus::Initstyle`
+
+Service startup scripts style (e.g. rc, upstart or systemd)
+
+Default value: $facts['service_provider']
+
+##### `install_method`
+
+Data type: `String`
+
+Installation method: url or package (only url is supported currently)
+
+Default value: $prometheus::install_method
+
+##### `manage_group`
+
+Data type: `Boolean`
+
+Whether to create a group for or rely on external code for that
+
+Default value: `true`
+
+##### `manage_service`
+
+Data type: `Boolean`
+
+Should puppet manage the service? (default true)
+
+Default value: `true`
+
+##### `manage_user`
+
+Data type: `Boolean`
+
+Whether to create user or rely on external code for that
+
+Default value: `true`
+
+##### `os`
+
+Data type: `String[1]`
+
+Operating system (linux is the only one supported)
+
+Default value: downcase($facts['kernel'])
+
+##### `package_ensure`
+
+Data type: `String`
+
+If package, then use this for package ensure default 'latest'
+
+Default value: 'present'
+
+##### `package_name`
+
+Data type: `String[1]`
+
+The binary package name - not available yet
+
+Default value: 'memcached_exporter'
+
+##### `purge_config_dir`
+
+Data type: `Boolean`
+
+Purge config files no longer generated by Puppet
+
+Default value: `true`
+
+##### `restart_on_change`
+
+Data type: `Boolean`
+
+Should puppet restart the service on configuration change? (default true)
+
+Default value: `true`
+
+##### `service_enable`
+
+Data type: `Boolean`
+
+Whether to enable the service from puppet (default true)
+
+Default value: `true`
+
+##### `service_ensure`
+
+Data type: `Stdlib::Ensure::Service`
+
+State ensured for the service (default 'running')
+
+Default value: 'running'
+
+##### `service_name`
+
+Data type: `String[1]`
+
+Name of the memcached exporter service (default 'memcached_exporter')
+
+Default value: 'memcached_exporter'
+
+##### `user`
+
+Data type: `String`
+
+User which runs the service
+
+Default value: 'memcached-exporter'
+
+##### `version`
+
+Data type: `String`
+
+The binary release version
+
+Default value: '0.6.0'
+
+##### `export_scrape_job`
+
+Data type: `Boolean`
+
+
+
+Default value: `false`
+
+##### `scrape_port`
+
+Data type: `Stdlib::Port`
+
+
+
+Default value: 9150
+
+##### `scrape_job_name`
+
+Data type: `String[1]`
+
+
+
+Default value: 'memcached'
+
+##### `scrape_job_labels`
+
+Data type: `Optional[Hash]`
+
+
+
+Default value: `undef`
+
+##### `bin_name`
+
+Data type: `Optional[String[1]]`
+
+
+
+Default value: `undef`
 
 ### prometheus::mesos_exporter
 
@@ -3085,7 +3363,7 @@ If package, then use this for package ensure default 'latest'
 
 ##### `package_name`
 
-Data type: `String`
+Data type: `String[1]`
 
 The binary package name - not available yet
 
@@ -3120,6 +3398,12 @@ Data type: `Stdlib::Ensure::Service`
 State ensured for the service (default 'running')
 
 Default value: 'running'
+
+##### `service_name`
+
+Data type: `String[1]`
+
+Name of the mesos exporter service (default 'mesos_exporter')
 
 ##### `user`
 
@@ -3291,7 +3575,7 @@ If package, then use this for package ensure default 'latest'
 
 ##### `package_name`
 
-Data type: `String`
+Data type: `String[1]`
 
 The binary package name - not available yet
 
@@ -3326,6 +3610,12 @@ Data type: `Stdlib::Ensure::Service`
 State ensured for the service (default 'running')
 
 Default value: 'running'
+
+##### `service_name`
+
+Data type: `String[1]`
+
+Name of the mongodb exporter service (default 'mongodb_exporter')
 
 ##### `user`
 
@@ -3558,7 +3848,7 @@ If package, then use this for package ensure default 'latest'
 
 ##### `package_name`
 
-Data type: `String`
+Data type: `String[1]`
 
 The binary package name - not available yet
 
@@ -3593,6 +3883,12 @@ Data type: `Stdlib::Ensure::Service`
 State ensured for the service (default 'running')
 
 Default value: 'running'
+
+##### `service_name`
+
+Data type: `String[1]`
+
+Name of the mysqld exporter service (default 'mysqld_exporter')
 
 ##### `user`
 
@@ -3764,7 +4060,7 @@ If package, then use this for package ensure default 'latest'
 
 ##### `package_name`
 
-Data type: `String`
+Data type: `String[1]`
 
 The binary package name - not available yet
 
@@ -3799,6 +4095,12 @@ Data type: `String`
 State ensured for the service (default 'running')
 
 Default value: 'running'
+
+##### `service_name`
+
+Data type: `String[1]`
+
+Name of the nginx-vts exporter service (default 'nginx-vts-exporter')
 
 ##### `user`
 
@@ -3991,7 +4293,7 @@ If package, then use this for package ensure default 'latest'
 
 ##### `package_name`
 
-Data type: `String`
+Data type: `String[1]`
 
 The binary package name - not available yet
 
@@ -4683,7 +4985,7 @@ If package, then use this for package ensure default 'latest'
 
 ##### `package_name`
 
-Data type: `String`
+Data type: `String[1]`
 
 The binary package name - not available yet
 
@@ -4718,6 +5020,12 @@ Data type: `Stdlib::Ensure::Service`
 State ensured for the service (default 'running')
 
 Default value: 'running'
+
+##### `service_name`
+
+Data type: `String[1]`
+
+Name of the process exporter service (default 'process-exporter')
 
 ##### `user`
 
@@ -4793,6 +5101,246 @@ Data type: `Optional[Hash]`
 
 
 Default value: `undef`
+
+### prometheus::puppetdb_exporter
+
+This module manages prometheus node puppetdb_exporter
+
+#### Parameters
+
+The following parameters are available in the `prometheus::puppetdb_exporter` class.
+
+##### `arch`
+
+Data type: `String[1]`
+
+Architecture (amd64 or i386)
+
+Default value: $prometheus::real_arch
+
+##### `bin_dir`
+
+Data type: `String`
+
+Directory where binaries are located
+
+Default value: $prometheus::bin_dir
+
+##### `download_extension`
+
+Data type: `String`
+
+Extension for the release binary archive
+
+Default value: 'tar.gz'
+
+##### `download_url`
+
+Data type: `Optional[String]`
+
+Complete URL corresponding to the where the release binary archive can be downloaded
+
+Default value: `undef`
+
+##### `download_url_base`
+
+Data type: `String`
+
+Base URL for the binary archive
+
+Default value: 'https://github.com/camptocamp/prometheus-puppetdb-exporter/releases'
+
+##### `extra_groups`
+
+Data type: `Array[String]`
+
+Extra groups to add the binary user to
+
+Default value: []
+
+##### `extra_options`
+
+Data type: `String`
+
+Extra options added to the startup command
+
+Default value: ''
+
+##### `group`
+
+Data type: `String`
+
+Group under which the binary is running
+
+Default value: 'puppetdb-exporter'
+
+##### `init_style`
+
+Data type: `Prometheus::Initstyle`
+
+Service startup scripts style (e.g. rc, upstart or systemd)
+
+Default value: $facts['service_provider']
+
+##### `install_method`
+
+Data type: `String`
+
+Installation method: url or package (only url is supported currently)
+
+Default value: $prometheus::install_method
+
+##### `manage_group`
+
+Data type: `Boolean`
+
+Whether to create a group for or rely on external code for that
+
+Default value: `true`
+
+##### `manage_service`
+
+Data type: `Boolean`
+
+Should puppet manage the service? (default true)
+
+Default value: `true`
+
+##### `manage_user`
+
+Data type: `Boolean`
+
+Whether to create user or rely on external code for that
+
+Default value: `true`
+
+##### `os`
+
+Data type: `String[1]`
+
+Operating system (linux is the only one supported)
+
+Default value: downcase($facts['kernel'])
+
+##### `package_ensure`
+
+Data type: `String`
+
+If package, then use this for package ensure default 'latest'
+
+Default value: 'present'
+
+##### `package_name`
+
+Data type: `String[1]`
+
+The binary package name - not available yet
+
+Default value: 'puppetdb_exporter'
+
+##### `purge_config_dir`
+
+Data type: `Boolean`
+
+Purge config files no longer generated by Puppet
+
+Default value: `true`
+
+##### `restart_on_change`
+
+Data type: `Boolean`
+
+Should puppet restart the service on configuration change? (default true)
+
+Default value: `true`
+
+##### `service_enable`
+
+Data type: `Boolean`
+
+Whether to enable the service from puppet (default true)
+
+Default value: `true`
+
+##### `service_ensure`
+
+Data type: `Stdlib::Ensure::Service`
+
+State ensured for the service (default 'running')
+
+Default value: 'running'
+
+##### `service_name`
+
+Data type: `String[1]`
+
+Name of the puppetdb exporter service (default 'puppetdb_exporter')
+
+Default value: 'puppetdb_exporter'
+
+##### `user`
+
+Data type: `String`
+
+User which runs the service
+
+Default value: 'puppetdb-exporter'
+
+##### `version`
+
+Data type: `String`
+
+The binary release version
+
+Default value: '1.0.0'
+
+##### `puppetdb_url`
+
+Data type: `Stdlib::HTTPUrl`
+
+The URI to PuppetDB with http/https protocol at the beginning and `/pdb/query` at the end
+
+Default value: 'http://127.0.0.1:8080/pdb/query'
+
+##### `export_scrape_job`
+
+Data type: `Boolean`
+
+
+
+Default value: `false`
+
+##### `scrape_port`
+
+Data type: `Stdlib::Port`
+
+
+
+Default value: 9635
+
+##### `scrape_job_name`
+
+Data type: `String[1]`
+
+
+
+Default value: 'puppetdb'
+
+##### `scrape_job_labels`
+
+Data type: `Optional[Hash]`
+
+
+
+Default value: `undef`
+
+##### `bin_name`
+
+Data type: `String[1]`
+
+
+
+Default value: 'prometheus-puppetdb-exporter'
 
 ### prometheus::pushgateway
 
@@ -5464,7 +6012,7 @@ If package, then use this for package ensure default 'latest'
 
 ##### `package_name`
 
-Data type: `String`
+Data type: `String[1]`
 
 The binary package name - not available yet
 
@@ -5499,6 +6047,12 @@ Data type: `Stdlib::Ensure::Service`
 State ensured for the service (default 'running')
 
 Default value: 'running'
+
+##### `service_name`
+
+Data type: `String[1]`
+
+Name of the rabbitmq exporter service (default 'rabbitmq_exporter')
 
 ##### `user`
 
@@ -5733,7 +6287,7 @@ If package, then use this for package ensure default 'latest'
 
 ##### `package_name`
 
-Data type: `String`
+Data type: `String[1]`
 
 The binary package name - not available yet
 
@@ -6065,6 +6619,14 @@ Data type: `Stdlib::Ensure::Service`
 
 Default value: $prometheus::service_ensure
 
+##### `service_name`
+
+Data type: `String[1]`
+
+
+
+Default value: $prometheus::service_name
+
 ##### `manage_service`
 
 Data type: `Boolean`
@@ -6341,7 +6903,7 @@ If package, then use this for package ensure default 'latest'
 
 ##### `package_name`
 
-Data type: `String`
+Data type: `String[1]`
 
 The binary package name - not available yet
 
@@ -6376,6 +6938,12 @@ Data type: `Stdlib::Ensure::Service`
 State ensured for the service (default 'running')
 
 Default value: 'running'
+
+##### `service_name`
+
+Data type: `String[1]`
+
+Name of the snmp exporter service (default 'snmp_exporter')
 
 ##### `user`
 
@@ -6549,7 +7117,7 @@ If package, then use this for package ensure default 'latest'
 
 ##### `package_name`
 
-Data type: `String`
+Data type: `String[1]`
 
 The binary package name - not available yet
 
@@ -6584,6 +7152,12 @@ Data type: `Stdlib::Ensure::Service`
 State ensured for the service (default 'running')
 
 Default value: 'running'
+
+##### `service_name`
+
+Data type: `String[1]`
+
+Name of the statsd exporter service (default 'statsd_exporter')
 
 ##### `mappings`
 
@@ -6766,7 +7340,7 @@ If package, then use this for package ensure default 'latest'
 
 ##### `package_name`
 
-Data type: `String`
+Data type: `String[1]`
 
 The binary package name - not available yet
 
@@ -6801,6 +7375,12 @@ Data type: `Stdlib::Ensure::Service`
 State ensured for the service (default 'running')
 
 Default value: 'running'
+
+##### `service_name`
+
+Data type: `String[1]`
+
+Name of the varnish exporter service (default 'varnish_exporter')
 
 ##### `user`
 
@@ -7053,6 +7633,22 @@ Data type: `Optional[String[1]]`
 Custom command passed to the archive resource to extract the downloaded archive.
 
 Default value: $prometheus::extract_command
+
+##### `extract_path`
+
+Data type: `Stdlib::Absolutepath`
+
+Path where to find extracted binary
+
+Default value: '/opt'
+
+##### `archive_bin_path`
+
+Data type: `Stdlib::Absolutepath`
+
+Path to the binary in the downloaded archive.
+
+Default value: "/opt/${name}-${version}.${os}-${arch}/${name}"
 
 ##### `init_style`
 

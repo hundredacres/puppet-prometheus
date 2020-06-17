@@ -1,10 +1,8 @@
-# @summary This module manages prometheus pushprox_client
+# @summary This module manages prometheus node puppetdb_exporter
 # @param arch
 #  Architecture (amd64 or i386)
 # @param bin_dir
 #  Directory where binaries are located
-# @param config_mode
-#  The permissions of the configuration files
 # @param download_extension
 #  Extension for the release binary archive
 # @param download_url
@@ -42,56 +40,59 @@
 # @param service_ensure
 #  State ensured for the service (default 'running')
 # @param service_name
-#  Name of the pushprox_client service (default 'pushprox_client')
+#  Name of the puppetdb exporter service (default 'puppetdb_exporter')
 # @param user
 #  User which runs the service
 # @param version
 #  The binary release version
-# @param env_vars
-#  The environment variable to pass to the daemon
-class prometheus::pushprox_client (
-  String[1] $proxy_url,
-  String $download_extension,
-  Prometheus::Uri $download_url_base,
-  Array[String[1]] $extra_groups,
-  String $group,
-  String $package_ensure,
-  String $package_name,
-  String $user,
-  String $version,
+# @param puppetdb_url
+#  The URI to PuppetDB with http/https protocol at the beginning and `/pdb/query` at the end
+class prometheus::puppetdb_exporter (
+  String $download_extension              = 'tar.gz',
+  String $download_url_base               = 'https://github.com/camptocamp/prometheus-puppetdb-exporter/releases',
+  Array[String] $extra_groups             = [],
+  String $group                           = 'puppetdb-exporter',
+  String $package_ensure                  = 'present',
+  String[1] $package_name                 = 'puppetdb_exporter',
+  String $user                            = 'puppetdb-exporter',
+  String $version                         = '1.0.0',
+  Boolean $purge_config_dir               = true,
+  Boolean $restart_on_change              = true,
   Boolean $service_enable                 = true,
   Stdlib::Ensure::Service $service_ensure = 'running',
-  String[1] $service_name                 = 'pushprox_client',
-  Boolean $restart_on_change              = true,
-  Boolean $purge_config_dir               = true,
+  String[1] $service_name                 = 'puppetdb_exporter',
   Prometheus::Initstyle $init_style       = $facts['service_provider'],
   String $install_method                  = $prometheus::install_method,
   Boolean $manage_group                   = true,
   Boolean $manage_service                 = true,
   Boolean $manage_user                    = true,
-  String[1] $os                           = $prometheus::os,
+  String[1] $os                           = downcase($facts['kernel']),
   String $extra_options                   = '',
   Optional[String] $download_url          = undef,
-  String $config_mode                     = $prometheus::config_mode,
   String[1] $arch                         = $prometheus::real_arch,
-  Stdlib::Absolutepath $bin_dir           = $prometheus::bin_dir,
-  Hash[String, Scalar] $env_vars          = {},
+  String $bin_dir                         = $prometheus::bin_dir,
+  Boolean $export_scrape_job              = false,
+  Stdlib::Port $scrape_port               = 9635,
+  String[1] $scrape_job_name              = 'puppetdb',
+  Optional[Hash] $scrape_job_labels       = undef,
+  Optional[String[1]] $bin_name           = undef,
+  Stdlib::HTTPUrl $puppetdb_url           = 'http://127.0.0.1:8080/pdb/query',
 ) inherits prometheus {
 
-  $real_download_url = pick($download_url,"${download_url_base}/download/v${version}/PushProx-${version}.${os}-${arch}.${download_extension}")
+  $real_download_url = pick($download_url,"${download_url_base}/download/${version}/prometheus-puppetdb-exporter-${version}.${os}-${arch}.${download_extension}")
 
   $notify_service = $restart_on_change ? {
     true    => Service[$service_name],
     default => undef,
   }
 
-  $options = "--proxy-url=${proxy_url} ${extra_options}"
+  $real_puppetdb_url = "--puppetdb-url=${puppetdb_url}"
+  $options = join([$extra_options, $real_puppetdb_url], ' ')
 
   prometheus::daemon { $service_name:
     install_method     => $install_method,
     version            => $version,
     download_extension => $download_extension,
-    archive_bin_path   => "/opt/PushProx-${version}.${os}-${arch}/pushprox-client",
     os                 => $os,
     arch               => $arch,
     real_download_url  => $real_download_url,
@@ -110,6 +111,11 @@ class prometheus::pushprox_client (
     service_ensure     => $service_ensure,
     service_enable     => $service_enable,
     manage_service     => $manage_service,
-    env_vars           => $env_vars,
+    export_scrape_job  => $export_scrape_job,
+    scrape_port        => $scrape_port,
+    scrape_job_name    => $scrape_job_name,
+    scrape_job_labels  => $scrape_job_labels,
+    bin_name           => $bin_name,
+    archive_bin_path   => "/opt/prometheus-puppetdb-exporter-${version}.${os}-${arch}/prometheus-puppetdb-exporter",
   }
 }

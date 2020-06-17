@@ -1,8 +1,13 @@
-# @summary This module manages prometheus pushprox_client
+# @summary This module manages prometheus grok_exporter
 # @param arch
 #  Architecture (amd64 or i386)
 # @param bin_dir
 #  Directory where binaries are located
+# @param config
+#  Hash of configuration, see https://github.com/fstab/grok_exporter/blob/master/CONFIG.md
+#  for available options
+# @param config_file
+#  Path to config file, it will be generated from config param
 # @param config_mode
 #  The permissions of the configuration files
 # @param download_extension
@@ -42,56 +47,66 @@
 # @param service_ensure
 #  State ensured for the service (default 'running')
 # @param service_name
-#  Name of the pushprox_client service (default 'pushprox_client')
+#  Name of the node exporter service (default 'grok_exporter')
 # @param user
 #  User which runs the service
 # @param version
 #  The binary release version
-# @param env_vars
-#  The environment variable to pass to the daemon
-class prometheus::pushprox_client (
-  String[1] $proxy_url,
-  String $download_extension,
+class prometheus::grok_exporter (
+  Hash $config,
+  String $config_file,
+  String[1] $download_extension,
   Prometheus::Uri $download_url_base,
   Array[String[1]] $extra_groups,
-  String $group,
-  String $package_ensure,
-  String $package_name,
-  String $user,
-  String $version,
+  String[1] $group,
+  String[1] $package_ensure,
+  String[1] $package_name,
+  String[1] $user,
+  String[1] $version,
+  Boolean $purge_config_dir               = true,
+  Boolean $restart_on_change              = true,
   Boolean $service_enable                 = true,
   Stdlib::Ensure::Service $service_ensure = 'running',
-  String[1] $service_name                 = 'pushprox_client',
-  Boolean $restart_on_change              = true,
-  Boolean $purge_config_dir               = true,
+  String[1] $service_name                 = 'grok_exporter',
   Prometheus::Initstyle $init_style       = $facts['service_provider'],
-  String $install_method                  = $prometheus::install_method,
+  String[1] $install_method               = $prometheus::install_method,
   Boolean $manage_group                   = true,
   Boolean $manage_service                 = true,
   Boolean $manage_user                    = true,
-  String[1] $os                           = $prometheus::os,
+  String[1] $os                           = downcase($facts['kernel']),
   String $extra_options                   = '',
-  Optional[String] $download_url          = undef,
-  String $config_mode                     = $prometheus::config_mode,
+  Optional[Prometheus::Uri] $download_url = undef,
+  String[1] $config_mode                  = $prometheus::config_mode,
   String[1] $arch                         = $prometheus::real_arch,
   Stdlib::Absolutepath $bin_dir           = $prometheus::bin_dir,
-  Hash[String, Scalar] $env_vars          = {},
+  Boolean $export_scrape_job              = false,
+  Stdlib::Port $scrape_port               = 9144,
+  String[1] $scrape_job_name              = 'grok',
+  Optional[Hash] $scrape_job_labels       = undef,
 ) inherits prometheus {
 
-  $real_download_url = pick($download_url,"${download_url_base}/download/v${version}/PushProx-${version}.${os}-${arch}.${download_extension}")
-
+  #Please provide the download_url for versions < 0.9.0
+  $real_download_url    = pick($download_url,"${download_url_base}/download/v${version}/${package_name}-${version}.${os}-${arch}.${download_extension}")
   $notify_service = $restart_on_change ? {
     true    => Service[$service_name],
     default => undef,
   }
 
-  $options = "--proxy-url=${proxy_url} ${extra_options}"
+  $options = "-config ${config_file} ${extra_options}"
+
+  file { $config_file:
+    ensure  => present,
+    owner   => 'root',
+    group   => $group,
+    mode    => $config_mode,
+    content => inline_template('<%= @config.to_yaml %>'),
+    notify  => $notify_service,
+  }
 
   prometheus::daemon { $service_name:
     install_method     => $install_method,
     version            => $version,
     download_extension => $download_extension,
-    archive_bin_path   => "/opt/PushProx-${version}.${os}-${arch}/pushprox-client",
     os                 => $os,
     arch               => $arch,
     real_download_url  => $real_download_url,
@@ -110,6 +125,9 @@ class prometheus::pushprox_client (
     service_ensure     => $service_ensure,
     service_enable     => $service_enable,
     manage_service     => $manage_service,
-    env_vars           => $env_vars,
+    export_scrape_job  => $export_scrape_job,
+    scrape_port        => $scrape_port,
+    scrape_job_name    => $scrape_job_name,
+    scrape_job_labels  => $scrape_job_labels,
   }
 }
