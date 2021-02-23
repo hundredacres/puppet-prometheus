@@ -55,24 +55,24 @@
 #  The binary release version
 class prometheus::beanstalkd_exporter (
   String $download_extension,
-  String $download_url_base,
+  String[1] $download_url_base,
   Array $extra_groups,
-  String $group,
-  String $package_ensure,
+  String[1] $group,
+  String[1] $package_ensure,
   String[1] $package_name,
   String[1] $service_name,
-  String $user,
-  String $version,
-  String $config,
-  String $mapping_config,
-  String $beanstalkd_address,
-  String $exporter_listen,
+  String[1] $user,
+  String[1] $version,
+  String[1] $config,
+  String[1] $mapping_config,
+  String[1] $beanstalkd_address,
+  String[1] $exporter_listen,
   Boolean $purge_config_dir               = true,
   Boolean $restart_on_change              = true,
   Boolean $service_enable                 = true,
   Stdlib::Ensure::Service $service_ensure = 'running',
   Prometheus::Initstyle $init_style       = $facts['service_provider'],
-  String $install_method                  = $prometheus::install_method,
+  Prometheus::Install $install_method     = $prometheus::install_method,
   Boolean $manage_group                   = true,
   Boolean $manage_service                 = true,
   Boolean $manage_user                    = true,
@@ -80,31 +80,37 @@ class prometheus::beanstalkd_exporter (
   String $extra_options                   = '',
   Variant[Undef,String] $download_url     = undef,
   String[1] $arch                         = $prometheus::real_arch,
-  String $bin_dir                         = $prometheus::bin_dir,
+  String[1] $bin_dir                      = $prometheus::bin_dir,
   Boolean $export_scrape_job              = false,
+  Optional[Stdlib::Host] $scrape_host     = undef,
   Stdlib::Port $scrape_port               = 8080,
   String[1] $scrape_job_name              = 'beanstalkd',
   Optional[Hash] $scrape_job_labels       = undef,
 ) inherits prometheus {
-
-  #Please provide the download_url for versions < 0.9.0
-  $real_download_url = pick($download_url,"${download_url_base}/download/${version}/${package_name}-${version}.${os}-${arch}.${download_extension}")
+  # Download url differs between 1.0.0 and 1.0.1 onwards
+  if( versioncmp($version, '1.0.0') < 1 ) {
+    $real_download_url = pick($download_url,"${download_url_base}/download/${version}/${package_name}-${version}.${os}-${arch}.${download_extension}")
+    $options = "-listen-address ${exporter_listen} -config ${config} -mapping-config ${mapping_config} ${extra_options}"
+    $real_file_ensure = 'file'
+  } else {
+    $real_download_url = pick($download_url,"${download_url_base}/download/${version}/${package_name}-${version}.${os}-${arch}")
+    $options = "-web.listen-address ${exporter_listen} -beanstalkd.address ${beanstalkd_address} ${extra_options}"
+    $real_file_ensure = 'absent'
+  }
 
   $notify_service = $restart_on_change ? {
     true    => Service[$service_name],
     default => undef,
   }
 
-  $options = "-listen-address ${exporter_listen} -config ${config} -mapping-config ${mapping_config} ${extra_options}"
-
   file { $config:
-    ensure  => file,
+    ensure  => $real_file_ensure,
     content => $beanstalkd_address,
     before  => Prometheus::Daemon['beanstalkd_exporter'],
   }
 
   file { $mapping_config:
-    ensure => file,
+    ensure => $real_file_ensure,
     before => Prometheus::Daemon['beanstalkd_exporter'],
   }
 
@@ -131,6 +137,7 @@ class prometheus::beanstalkd_exporter (
     service_enable     => $service_enable,
     manage_service     => $manage_service,
     export_scrape_job  => $export_scrape_job,
+    scrape_host        => $scrape_host,
     scrape_port        => $scrape_port,
     scrape_job_name    => $scrape_job_name,
     scrape_job_labels  => $scrape_job_labels,

@@ -4,6 +4,103 @@ All notable changes to this project will be documented in this file.
 Each new release typically also includes the latest modulesync defaults.
 These should not affect the functionality of the module.
 
+## [v11.0.0](https://github.com/voxpupuli/puppet-prometheus/tree/v11.0.0) (2021-01-17)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-prometheus/compare/v10.2.0...v11.0.0)
+
+**Breaking changes:**
+
+- Drop Puppet 5; require at least Puppet 6.1.0 [\#518](https://github.com/voxpupuli/puppet-prometheus/pull/518) ([bastelfreak](https://github.com/bastelfreak))
+- puppetdb\_exporter: Update 1.0.0-\>1.1.0 [\#513](https://github.com/voxpupuli/puppet-prometheus/pull/513) ([bastelfreak](https://github.com/bastelfreak))
+- Drop EOL CentOS 6 support [\#512](https://github.com/voxpupuli/puppet-prometheus/pull/512) ([bastelfreak](https://github.com/bastelfreak))
+- Drop Debian 8 support/compatibility [\#496](https://github.com/voxpupuli/puppet-prometheus/pull/496) ([bastelfreak](https://github.com/bastelfreak))
+
+**Implemented enhancements:**
+
+- Support Puppet 7.x [\#515](https://github.com/voxpupuli/puppet-prometheus/pull/515) ([bastelfreak](https://github.com/bastelfreak))
+- Add Ubuntu 20.04 support [\#514](https://github.com/voxpupuli/puppet-prometheus/pull/514) ([bastelfreak](https://github.com/bastelfreak))
+- Daemon: create env files only if required [\#493](https://github.com/voxpupuli/puppet-prometheus/pull/493) ([bastelfreak](https://github.com/bastelfreak))
+
+**Fixed bugs:**
+
+- Purge collected configs based on $purge\_config\_dir [\#517](https://github.com/voxpupuli/puppet-prometheus/pull/517) ([towo](https://github.com/towo))
+- \(FACT-2880\) fact: call Puppet within setcode block [\#511](https://github.com/voxpupuli/puppet-prometheus/pull/511) ([bastelfreak](https://github.com/bastelfreak))
+- Allow download\_extension to be empty string [\#507](https://github.com/voxpupuli/puppet-prometheus/pull/507) ([treydock](https://github.com/treydock))
+- fix sysv init scripts [\#502](https://github.com/voxpupuli/puppet-prometheus/pull/502) ([kubicgruenfeld](https://github.com/kubicgruenfeld))
+
+**Closed issues:**
+
+- haproxy\_exporter fails scraping when haproxy.scrape-uri contains specials characters  [\#516](https://github.com/voxpupuli/puppet-prometheus/issues/516)
+- scrape\_job exported resources are ignoring custom collect dir [\#490](https://github.com/voxpupuli/puppet-prometheus/issues/490)
+- config.pp does not honor $prometheus::purge\_config\_dir value [\#460](https://github.com/voxpupuli/puppet-prometheus/issues/460)
+- SysV init script leaves dangling shell processes [\#293](https://github.com/voxpupuli/puppet-prometheus/issues/293)
+
+**Merged pull requests:**
+
+- Fix typo in init.pp docs [\#504](https://github.com/voxpupuli/puppet-prometheus/pull/504) ([genebean](https://github.com/genebean))
+
+## [v10.2.0](https://github.com/voxpupuli/puppet-prometheus/tree/v10.2.0) (2020-09-26)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-prometheus/compare/v10.1.0...v10.2.0)
+
+Debian 8 is EOL since a few months now. This release will be the last with official Debian 8 compatibility and support. The next release will be v11.0.0 without Debian 8 support!
+
+**Implemented enhancements:**
+
+- Allow filtering scrape jobs by nodes [\#488](https://github.com/voxpupuli/puppet-prometheus/pull/488) ([fbs](https://github.com/fbs))
+- Add option to override `scrape_host` for exporters [\#487](https://github.com/voxpupuli/puppet-prometheus/pull/487) ([fbs](https://github.com/fbs))
+
+**Merged pull requests:**
+
+- Extend puppet type check for install\_method [\#492](https://github.com/voxpupuli/puppet-prometheus/pull/492) ([bastelfreak](https://github.com/bastelfreak))
+
+## [v10.1.0](https://github.com/voxpupuli/puppet-prometheus/tree/v10.1.0) (2020-08-23)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-prometheus/compare/v10.0.0...v10.1.0)
+
+**Implemented enhancements:**
+
+- Add support for Google Cloud gs storage [\#485](https://github.com/voxpupuli/puppet-prometheus/pull/485) ([j0sh3rs](https://github.com/j0sh3rs))
+- prometheus::dellhw\_exporter: Add scrape\_ipadress parameter [\#484](https://github.com/voxpupuli/puppet-prometheus/pull/484) ([lconsuegra](https://github.com/lconsuegra))
+
+## [v10.0.0](https://github.com/voxpupuli/puppet-prometheus/tree/v10.0.0) (2020-08-15)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-prometheus/compare/v9.1.0...v10.0.0)
+
+**Breaking changes:**
+
+- update version numbers to latest releases [\#479](https://github.com/voxpupuli/puppet-prometheus/pull/479) ([antondollmaier](https://github.com/antondollmaier))
+
+**Implemented enhancements:**
+
+- Fixes for prometheus::dellhw\_exporter not working as is [\#480](https://github.com/voxpupuli/puppet-prometheus/pull/480) ([lconsuegra](https://github.com/lconsuegra))
+
+**Merged pull requests:**
+
+- Prometheus: Update 2.20.0-\>2.20.1 [\#481](https://github.com/voxpupuli/puppet-prometheus/pull/481) ([bastelfreak](https://github.com/bastelfreak))
+- modulesync 3.0.0 & puppet-lint updates [\#478](https://github.com/voxpupuli/puppet-prometheus/pull/478) ([bastelfreak](https://github.com/bastelfreak))
+
+## [v9.1.0](https://github.com/voxpupuli/puppet-prometheus/tree/v9.1.0) (2020-07-21)
+
+[Full Changelog](https://github.com/voxpupuli/puppet-prometheus/compare/v9.0.0...v9.1.0)
+
+**Implemented enhancements:**
+
+- Issue 469: Add dellhw\_exporter support [\#470](https://github.com/voxpupuli/puppet-prometheus/pull/470) ([kkunkel](https://github.com/kkunkel))
+
+**Fixed bugs:**
+
+- Exporters: Reload service if user has changed attributes [\#474](https://github.com/voxpupuli/puppet-prometheus/pull/474) ([bastelfreak](https://github.com/bastelfreak))
+
+**Closed issues:**
+
+- Add support for dellhw\_exporter [\#469](https://github.com/voxpupuli/puppet-prometheus/issues/469)
+- Thanos unable to write to tsdb directory [\#466](https://github.com/voxpupuli/puppet-prometheus/issues/466)
+
+**Merged pull requests:**
+
+- updating String to String\[1\] when '' is invalid [\#471](https://github.com/voxpupuli/puppet-prometheus/pull/471) ([kkunkel](https://github.com/kkunkel))
+
 ## [v9.0.0](https://github.com/voxpupuli/puppet-prometheus/tree/v9.0.0) (2020-06-16)
 
 [Full Changelog](https://github.com/voxpupuli/puppet-prometheus/compare/v8.5.0...v9.0.0)
